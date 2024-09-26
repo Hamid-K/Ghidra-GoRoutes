@@ -57,17 +57,19 @@ def find_functions_calling_addRegexpMatcher_or_PathPrefix():
 
 def extract_handler_function_from_decompiled_code(decompiled_code, func_name):
     """
-    Extract the handler function name from the decompiled code, using regex to identify patterns like
-    (code *)&PTR_backend/tacacs.addTacacsService_00bbde88
-    :param decompiled_code: Decompiled code as a string
-    :param func_name: Name of the function being analyzed
-    :return: Extracted handler function names
+    Ghidra modifies function names, replacing "/" with "_".
+    To-Do: rewrite this function.
     """
-    handler_pattern = r'&PTR_([a-zA-Z0-9_/\.]+)'  # Regex to capture handler function names
-    debug_print("[DEBUG] Decompiled code for {}:\n{}".format(func_name, decompiled_code))
+    # Adjusted regex to capture the full function name with slashes and dots, without any modification
+    handler_pattern = r'\*extraout_[A-Za-z0-9_]+\s*=\s*([a-zA-Z0-9_/\.]+);'
 
+    # Capturing the exact function name
     matches = re.findall(handler_pattern, decompiled_code)
+
     if matches:
+        # Debugging each match found
+        for match in matches:
+            debug_print("[DEBUG] Extracted handler function: {}".format(match))
         return matches
     else:
         debug_print("[DEBUG] No handler functions found in function: {}".format(func_name))
